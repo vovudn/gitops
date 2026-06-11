@@ -5,6 +5,6 @@ spec:
   project: default
   source:
     repoURL: https://github.com/vovudn/gitops.git
-    path: argocd/apps # <- thư mục chứa các App con (đã có web.yaml)
+    path: argocd/apps
   destination: { server: https://kubernetes.default.svc, namespace: argocd }
   syncPolicy: { automated: { prune: true, selfHeal: true } }
