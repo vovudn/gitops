@@ -69,7 +69,7 @@ spec:
   metrics:
     - name: error-rate
       interval: 30s
-      successCondition: result < 0.05
+      successCondition: result[0] < 0.05
       failureLimit: 3
       provider:
         prometheus:
