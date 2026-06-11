@@ -1,5 +1,6 @@
 kind: ConfigMap
-apiVersion: apps/v1-loi-roimetadata:
+apiVersion: v1
+metadata:
   name: web-config
   namespace: demo
   annotations:
