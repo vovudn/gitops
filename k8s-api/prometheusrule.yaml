@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: api-alerts
+  namespace: demo
+  labels:
+    prometheus: kube-prometheus-stack
+    role: alert-rules
+spec:
+  groups:
+    - name: api-slo
+      interval: 30s
+      rules:
+        - alert: HighErrorRate
+          expr: |
+            (sum(rate(flask_http_request_total{namespace="demo",status=~"5.."}[2m])) /
+            sum(rate(flask_http_request_total{namespace="demo"}[2m]))) > 0.05
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "High error rate detected on API"
+            description: "Error rate is {{ $value | humanizePercentage }} (threshold: 5%)"
