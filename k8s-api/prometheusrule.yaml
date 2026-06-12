@@ -15,7 +15,7 @@ spec:
           expr: |
             (sum(rate(flask_http_request_total{namespace="demo",status=~"5.."}[2m])) /
             sum(rate(flask_http_request_total{namespace="demo"}[2m]))) > 0.05
-          for: 1m
+          for: 0s
           labels:
             severity: critical
           annotations:
