@@ -15,20 +15,20 @@ spec:
       labels:
         app: api
       annotations:
-        test-run: "email-alert-test"
+        test-run: "baseline-no-errors"
     spec:
       containers:
         - name: api
-          image: w9-api:3
+          image: w9-api:1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
           env:
             - name: ERROR_RATE
-              value: "0.20"
+              value: "0.0"
             - name: VERSION
-              value: "v3-bad"
+              value: "v1"
           readinessProbe:
             httpGet:
               path: /healthz
