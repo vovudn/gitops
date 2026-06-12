@@ -15,20 +15,20 @@ spec:
       labels:
         app: api
       annotations:
-        test-run: "baseline-v1-clean"
+        test-run: "canary-v2-with-errors"
     spec:
       containers:
         - name: api
-          image: w9-api:1
+          image: w9-api:2
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
           env:
             - name: ERROR_RATE
-              value: "0.0"
+              value: "0.10"
             - name: VERSION
-              value: "v1"
+              value: "v2"
           readinessProbe:
             httpGet:
               path: /healthz
