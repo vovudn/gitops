@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: api
+      annotations:
+        test-run: "canary-v2-attempt2"
     spec:
       containers:
         - name: api
