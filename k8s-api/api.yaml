@@ -15,20 +15,20 @@ spec:
       labels:
         app: api
       annotations:
-        test-run: "email-test-no-analysis"
+        test-run: "baseline-v1-clean"
     spec:
       containers:
         - name: api
-          image: w9-api:3
+          image: w9-api:1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
           env:
             - name: ERROR_RATE
-              value: "0.20"
+              value: "0.0"
             - name: VERSION
-              value: "v3-email-test"
+              value: "v1"
           readinessProbe:
             httpGet:
               path: /healthz
@@ -36,8 +36,16 @@ spec:
   strategy:
     canary:
       steps:
+        - setWeight: 25
+        - pause: {}
+        - setWeight: 50
+        - pause: { duration: 30s }
         - setWeight: 100
-      # Disable analysis temporarily for email test
+        - pause: {}
+      analysis:
+        templates:
+          - templateName: error-rate-analysis
+        startingStep: 1
 ---
 apiVersion: v1
 kind: Service
