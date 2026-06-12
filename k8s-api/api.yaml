@@ -14,21 +14,19 @@ spec:
     metadata:
       labels:
         app: api
-      annotations:
-        test-run: "canary-v2-with-errors"
     spec:
       containers:
         - name: api
-          image: w9-api:2
+          image: w9-api:1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080
           env:
             - name: ERROR_RATE
-              value: "0.10"
+              value: "0.00"
             - name: VERSION
-              value: "v2"
+              value: "v1"
           readinessProbe:
             httpGet:
               path: /healthz
@@ -36,9 +34,17 @@ spec:
   strategy:
     canary:
       steps:
+        - setWeight: 25
+        - pause: {}
+        - setWeight: 50
+        - pause:
+            duration: 30s
         - setWeight: 100
-      # Analysis disabled for email alert testing
-      # Pods will run longer to allow Prometheus to scrape and alert to fire
+        - pause: {}
+      analysis:
+        templates:
+          - templateName: error-rate-analysis
+        startingStep: 1
 ---
 apiVersion: v1
 kind: Service
@@ -65,7 +71,7 @@ spec:
     - name: error-rate
       interval: 30s
       successCondition: result == 0 || result < 0.05
-      failureLimit: 6 
+      failureLimit: 3
       provider:
         prometheus:
           address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
