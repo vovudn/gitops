@@ -36,16 +36,9 @@ spec:
   strategy:
     canary:
       steps:
-        - setWeight: 25
-        - pause: {}
-        - setWeight: 50
-        - pause: { duration: 30s }
         - setWeight: 100
-        - pause: {}
-      analysis:
-        templates:
-          - templateName: error-rate-analysis
-        startingStep: 1
+      # Analysis disabled for email alert testing
+      # Pods will run longer to allow Prometheus to scrape and alert to fire
 ---
 apiVersion: v1
 kind: Service
@@ -72,7 +65,7 @@ spec:
     - name: error-rate
       interval: 30s
       successCondition: result == 0 || result < 0.05
-      failureLimit: 3
+      failureLimit: 6 
       provider:
         prometheus:
           address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
