@@ -15,7 +15,7 @@ spec:
       labels:
         app: api
       annotations:
-        test-run: "canary-v2-attempt2"
+        test-run: "email-alert-test"
     spec:
       containers:
         - name: api
@@ -26,9 +26,9 @@ spec:
               containerPort: 8080
           env:
             - name: ERROR_RATE
-              value: "0.15"
+              value: "0.20"
             - name: VERSION
-              value: "v3"
+              value: "v3-bad"
           readinessProbe:
             httpGet:
               path: /healthz
@@ -36,16 +36,8 @@ spec:
   strategy:
     canary:
       steps:
-        - setWeight: 25
-        - pause: {}
-        - setWeight: 50
-        - pause: { duration: 30s }
         - setWeight: 100
-        - pause: {}
-      analysis:
-        templates:
-          - templateName: error-rate-analysis
-        startingStep: 1
+      # Tat analysis de deploy thang 100% khong bi abort
 ---
 apiVersion: v1
 kind: Service
