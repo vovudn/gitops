@@ -69,13 +69,15 @@ spec:
   metrics:
     - name: error-rate
       interval: 30s
-      successCondition: result < 0.05 || isNaN(result) || isInf(result)
+      successCondition: result == 0 || result < 0.05
       failureLimit: 3
       provider:
         prometheus:
           address: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
           query: |
-            (
-              sum(rate(flask_http_request_total{namespace="demo",status=~"5.."}[1m])) /
-              sum(rate(flask_http_request_total{namespace="demo"}[1m]))
+            scalar(
+              sum(rate(flask_http_request_total{namespace="demo",status=~"5.."}[1m])) or vector(0)
+            ) / 
+            scalar(
+              sum(rate(flask_http_request_total{namespace="demo"}[1m])) or vector(1)
             )
