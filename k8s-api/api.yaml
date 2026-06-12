@@ -15,7 +15,7 @@ spec:
       labels:
         app: api
       annotations:
-        test-run: "inject-errors-for-email-test"
+        test-run: "email-alert-final-test"
     spec:
       containers:
         - name: api
@@ -26,9 +26,9 @@ spec:
               containerPort: 8080
           env:
             - name: ERROR_RATE
-              value: "0.15"
+              value: "0.20"
             - name: VERSION
-              value: "v3-error"
+              value: "v3-email-test"
           readinessProbe:
             httpGet:
               path: /healthz
