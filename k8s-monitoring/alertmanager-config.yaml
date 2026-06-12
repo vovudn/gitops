@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-email-secret
+  namespace: demo  # Same namespace as AlertmanagerConfig
+type: Opaque
+stringData:
+  smtp-password: "pkpnzphhfzlsgfuf"
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: email-alerts
+  namespace: demo
+  labels:
+    alertmanagerConfig: email
+spec:
+  route:
+    groupBy: ['alertname', 'namespace']
+    groupWait: 10s
+    groupInterval: 5m
+    repeatInterval: 5m
+    receiver: 'email-alerts'
+    matchers:
+      - name: alertname
+        value: HighErrorRate
+        matchType: "="
+  
+  receivers:
+    - name: 'email-alerts'
+      emailConfigs:
+        - to: 'vovudn95@gmail.com'
+          from: 'vovudn95@gmail.com'
+          smarthost: 'smtp.gmail.com:587'
+          authUsername: 'vovudn95@gmail.com'
+          authPassword:
+            name: alertmanager-email-secret
+            key: smtp-password
+          requireTLS: true
+          headers:
+            - key: Subject
+              value: '🔥 [{{ .Status | toUpper }}] {{ .GroupLabels.alertname }}'
+          text: |
+            Alert: {{ .GroupLabels.alertname }}
+            Severity: {{ .CommonLabels.severity }}
+            Namespace: {{ .CommonLabels.namespace }}
+            
+            {{ range .Alerts }}
+            Description: {{ .Annotations.description }}
+            Status: {{ .Status }}
+            Started: {{ .StartsAt }}
+            {{ end }}
